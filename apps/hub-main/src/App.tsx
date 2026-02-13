@@ -3,7 +3,7 @@ import { Github, Linkedin, ExternalLink, Mail } from 'lucide-react';
 // Se a imagem estiver em public/medium-logo.png, o Vite entende o caminho abaixo:
 import etanolGasolina from '/etanol-gasolina.png';
 import frasesMotivacionais from '/frases-motivacionais.png'
-import descubraIdade from '/descubra-idade.png'
+import criptoApp from '/criptoapp.png'
 import listaTarefas from '/lista-tarefas.png'
 
 const ReactIcon = () => (
@@ -69,12 +69,12 @@ const Portfolio = () => {
       image: frasesMotivacionais
     },
     {
-      title: "Descubra sua idade",
-      description: "Aplicação focada em performance e otimização de funções utilizando o hook useCallback.",
-      tech: ["React", "TypeScript", "useCallback"],
-      linkGithub: "https://github.com/fioriolab/react-labs-hub/tree/main/apps/descubra-idade",
-      linkDemo: "https://react-labs-hub-descubra-idade.vercel.app/",
-      image: descubraIdade
+      title: "Cripto App",
+      description: "Consumo de API em tempo real (CoinCap) com paginação infinita (Load More). O projeto foca em tipagem estrita com TypeScript, formatação de dados monetários complexos com a API Intl e uma interface de tabela dinâmica com carregamento sob demanda (pagination).",
+      tech: ["React", "TypeScript", "React Router", "Rest API"],
+      linkGithub: "https://github.com/fioriolab/react-labs-hub/tree/main/apps/criptoapp",
+      linkDemo: "https://criptoapp.vercel.app/",
+      image: criptoApp
     }
   ];
 
