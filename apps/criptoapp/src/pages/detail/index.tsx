@@ -25,7 +25,7 @@ export function Detail() {
     }, [cripto])
 
     function getCoin() {
-        fetch(`https://rest.coincap.io/v3/assets/${cripto}`)
+        fetch(`https://rest.coincap.io/v3/assets/${cripto}?apiKey=d41564b6f16fb466efa3f0a51cd06dc82821979da8e3dd199aa1d40ab8c19a04`)
         .then(response => response.json())
         .then((data: dataProps) => {
 
