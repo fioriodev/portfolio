@@ -1,0 +1,132 @@
+.container {
+    padding: 0 20px;
+}
+
+.form {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.form input {
+    flex: 1;
+    padding: 0 14px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    height: 44px;
+}
+
+.form button {
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+table {
+    width: 100%;
+    border-spacing: 0 14px;
+    table-layout: fixed;
+}
+
+table th, td {
+    color: white;
+    padding: 14px;
+    text-align: center;
+}
+
+.tr {
+    background-color: #202020;
+    transition: transform .3s;
+}
+
+.tr:hover {
+    transform: scale(1.01);
+}
+
+td:first-child { border-radius: 10px 0 0 10px; }
+td:last-child { border-radius: 0 10px 10px 0; }
+
+.icone {
+    width: 20px;
+    height: 20px;
+    transition: all 1s;
+}
+
+.icone:hover {
+    transform: scale(1.50);
+}
+
+.name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tdProfit {
+    color: #18C691;
+}
+
+.tdLoss {
+    color: #F44336;
+}
+
+.buttonMore {
+    background-color: #30beff;
+    color: white;
+    font-weight: 500;
+    border-radius: 10px;
+    padding: 10px 24px;
+    margin-bottom: 30px;
+    transition: filter .3s;
+}
+
+.buttonMore:hover {
+    filter: brightness(0.9);
+}
+
+.buttonMore:active {
+    background-color: #29a3dc;
+}
+
+@media screen and (max-width: 600px) {
+    .container {
+        padding: 0 10px;
+    }
+
+    table thead {
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        border: none;
+        overflow: hidden;
+    }
+
+    .tr {
+        display: block;
+        border-bottom: 1px solid rgba(221, 221, 221, 0.5);
+        margin-bottom: 10px;
+    }
+
+    .tr td {
+        display: block;
+        text-align: right;
+        padding: 14px 24px;
+        border-bottom: 1px solid rgba(221, 221, 221, 0.2);
+    }
+
+    td:first-child { border-radius: 0 0 0 0; }
+    td:last-child { border-radius: 0 0 0 0; }
+
+    .tr td::before {
+        content: attr(data-label);
+        float: left;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+
+    .icone {
+        margin-left: 14px;
+    }
+}

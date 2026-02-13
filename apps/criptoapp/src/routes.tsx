@@ -1,11 +1,13 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter } from "react-router-dom";
 
-import { Home } from './pages/home'
-import { Detail } from './pages/detail'
-import { NotFound } from './pages/notfound'
+import { Layout } from "./components/layout";
+import { Home } from "./pages/home";
+import { Detail } from "./pages/detail";
+import { NotFound } from "./pages/notfound";
 
 const router = createBrowserRouter([
     {
+        element: <Layout/>,
         children: [
             {
                 path: "/",
@@ -23,4 +25,4 @@ const router = createBrowserRouter([
     }
 ])
 
-export { router }
+export {router}

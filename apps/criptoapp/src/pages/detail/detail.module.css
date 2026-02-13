@@ -1,0 +1,71 @@
+.container {
+    background-color: white;
+    width: 100%;
+    max-width: 420px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.icone {
+    width: 50px;
+    height: 50px;
+    transition: all 1s;
+}
+
+.icone:hover {
+    transform: rotate(360deg);
+}
+
+.div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: -5px;
+}
+
+h2 {
+    font-size: 1.1em;
+    font-weight: 400;
+}
+
+.div > div {
+    border-left: 1px solid black;
+    padding-left: 10px;
+}
+
+ul {
+    margin-top: 30px;
+    list-style-position: inside;
+    list-style-type: none;
+}
+
+ul li {
+    margin-top: 10px;
+}
+
+.legend {
+    font-weight: 500;
+}
+
+.tdProfit {
+    font-weight: 500;
+    color: #18C691;
+}
+
+.tdLoss {
+    font-weight: 500;
+    color: #F44336;
+}
+
+.loading {
+    color: #309AFF;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
