@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Github, Linkedin, ExternalLink, Mail } from 'lucide-react';
 // Se a imagem estiver em public/medium-logo.png, o Vite entende o caminho abaixo:
 import etanolGasolina from '/etanol-gasolina.png';
-import frasesMotivacionais from '/frases-motivacionais.png'
+import devLink from '/devlink.png'
 import criptoApp from '/criptoapp.png'
 import listaTarefas from '/lista-tarefas.png'
 
@@ -61,12 +61,12 @@ const Portfolio = () => {
       image: etanolGasolina
     },
     {
-      title: "Frases Motivacionais",
-      description: "Um gerador de mensagens inspiradoras que utiliza estados do React para alternar conteúdos de forma dinâmica e aleatória.",
-      tech: ["React", "TypeScript", "State Management"],
-      linkGithub: "https://github.com/fioriolab/react-labs-hub/tree/main/apps/projeto-frases",
-      linkDemo: "https://react-labs-hub-projeto-frases.vercel.app/",
-      image: frasesMotivacionais
+      title: "Dev Link Hub",
+      description: "Plataforma de agregação de links personalizada com gerenciamento de conteúdo em tempo real via Firebase Firestore. O projeto demonstra integração com NoSQL para persistência de dados e atualização dinâmica de componentes baseada no estado do banco de dados.",
+      tech: ["React", "TypeScript", "Firebase", "Firestore", "Tailwind CSS"],
+      linkGithub: "https://github.com/fioriolab/react-labs-hub/tree/main/apps/devlink",
+      linkDemo: "https://react-labs-hub-devlink.vercel.app/",
+      image: devLink
     },
     {
       title: "Cripto App",
