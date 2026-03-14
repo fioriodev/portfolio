@@ -2,6 +2,7 @@ import { Social } from "../../components/social"
 import { FaLinkedin, FaWhatsapp, FaGithub } from "react-icons/fa"
 
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 
 import { db } from "../../services/firebaseConnection"
 import { getDocs, doc, query, orderBy, collection, getDoc } from "firebase/firestore"
@@ -71,6 +72,7 @@ export function Home() {
 
     return (
         <main className="flex flex-col justify-center items-center py-4">
+
             <h1 className="text-white mt-10 font-bold text-3xl md:text-4xl">Guilherme Henrique | FiorioDev</h1>
             <p className="text-white mt-3 mb-5 text-lg md:text-xl md:mt-5">Veja meus links 👇</p>
 
@@ -105,6 +107,10 @@ export function Home() {
 
                 </footer>
             )}
+
+            <button className="bg-black/30 border border-2 border-red-600 text-red-600 font-medium py-1 px-4 rounded-[50px] fixed bottom-20 md:bottom-5">
+                <Link to="/login">Login</Link>
+            </button>
 
         </main>
     )
