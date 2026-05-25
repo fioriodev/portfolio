@@ -79,7 +79,7 @@ const Portfolio = () => {
             <div>
               <div className="flex items-center gap-4 mb-2">
                 <h1 className="text-4xl font-bold tracking-tight sm:text-5xl bg-gradient-to-r from-white to-[#61DAFB] bg-clip-text text-transparent">
-                  Meu Hub de Projetos
+                  Meu Hub
                 </h1>
                 {/* Ícones ao lado do título principal */}
                 <div className="flex gap-2 opacity-80">
