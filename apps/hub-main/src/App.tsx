@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Github, Linkedin, ExternalLink, Mail } from 'lucide-react';
 // Se a imagem estiver em public/medium-logo.png, o Vite entende o caminho abaixo:
-import etanolGasolina from '/etanol-gasolina.png';
 import devLink from '/devlink.png'
 import criptoApp from '/criptoapp.png'
-import listaTarefas from '/lista-tarefas.png'
 
 const ReactIcon = () => (
   <svg width="24" height="24" viewBox="-11.5 -10.23174 23 20.46348" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#61DAFB] animate-[spin_10s_linear_infinite]">
@@ -45,35 +43,19 @@ const Portfolio = () => {
 
   const projetos = [
     {
-      title: "Lista de Tarefas",
-      description: "Gerenciador de atividades completo com persistência de dados, filtros de status e edição dinâmica de tarefas.",
-      tech: ["React", "TypeScript", "Local Storage", "Lucide Icons"],
-      linkGithub: "https://github.com/fioriolab/react-labs-hub/tree/main/apps/lista-tarefas", // Verifique se o caminho da pasta está correto
-      linkDemo: "https://react-labs-hub-lista-tarefas.vercel.app/", // Substitua pela sua URL da Vercel
-      image: listaTarefas
-    },
-    {
-      title: "Etanol ou Gasolina",
-      description: "Calculadora inteligente que utiliza a regra dos 70% para definir o melhor custo-benefício entre combustíveis.",
-      tech: ["React", "TypeScript", "Hooks"],
-      linkGithub: "https://github.com/fioriolab/react-labs-hub/tree/main/apps/etanol-ou-gasolina",
-      linkDemo: "https://react-labs-hub-etanol-ou-gasolina.vercel.app/",
-      image: etanolGasolina
-    },
-    {
       title: "Dev Link Hub",
       description: "Plataforma de agregação de links personalizada com gerenciamento de conteúdo em tempo real via Firebase Firestore. O projeto demonstra integração com NoSQL para persistência de dados e atualização dinâmica de componentes baseada no estado do banco de dados.",
       tech: ["React", "TypeScript", "Firebase", "Firestore", "Tailwind CSS"],
-      linkGithub: "https://github.com/fioriolab/react-labs-hub/tree/main/apps/devlink",
-      linkDemo: "https://react-labs-hub-devlink.vercel.app/",
+      linkGithub: "https://github.com/fioriodev/portfolio/tree/main/apps/devlink",
+      linkDemo: "https://portfolio-devlink.vercel.app/",
       image: devLink
     },
     {
       title: "Cripto App",
       description: "Consumo de API em tempo real (CoinCap) com paginação infinita (Load More). O projeto foca em tipagem estrita com TypeScript, formatação de dados monetários complexos com a API Intl e uma interface de tabela dinâmica com carregamento sob demanda (pagination).",
       tech: ["React", "TypeScript", "React Router", "Rest API"],
-      linkGithub: "https://github.com/fioriolab/react-labs-hub/tree/main/apps/criptoapp",
-      linkDemo: "https://criptoapp.vercel.app/",
+      linkGithub: "https://github.com/fioriodev/portfolio/tree/main/apps/criptoapp",
+      linkDemo: "https://portfolio-criptoapp.vercel.app/",
       image: criptoApp
     }
   ];
@@ -97,7 +79,7 @@ const Portfolio = () => {
             <div>
               <div className="flex items-center gap-4 mb-2">
                 <h1 className="text-4xl font-bold tracking-tight sm:text-5xl bg-gradient-to-r from-white to-[#61DAFB] bg-clip-text text-transparent">
-                  React Labs Hub
+                  Meu Hub de Projetos
                 </h1>
                 {/* Ícones ao lado do título principal */}
                 <div className="flex gap-2 opacity-80">
@@ -142,7 +124,7 @@ const Portfolio = () => {
 
             {/* Div inferior: Apenas Redes Sociais no pé da página */}
             <div className="flex items-center gap-5 mt-8 lg:mt-0">
-              <a href="https://github.com/fioriolab" target="_blank" rel="noreferrer" className="hover:text-slate-200 transition-colors">
+              <a href="https://github.com/fioriodev" target="_blank" rel="noreferrer" className="hover:text-slate-200 transition-colors">
                 <Github />
               </a>
               <a href="https://www.linkedin.com/in/guilhermehenriquefju/" target="_blank" rel="noreferrer" className="hover:text-slate-200 transition-colors">
