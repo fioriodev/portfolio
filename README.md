@@ -19,12 +19,10 @@ O projeto principal deste repositório é o **[Portfolio Hub]**, que serve como 
 Abaixo estão os projetos desenvolvidos, localizados na pasta `/apps`:
 
 | Projeto | Descrição |
-| :--- | :--- | :---: |
-| **🏠 [Hub Principal (Portfólio)](./apps/hub-main)** | Interface central (Spotlight Effect) que conecta todos os laboratórios. |
-| **⛽ [Gasolina ou etanol](./apps/etanol-ou-gasolina)** | Calculadora inteligente para escolha de combustível usando lógica de 70%. |
-| **📝 [Lista de Tarefas](./apps/lista-tarefas)** | Gerenciador de atividades com manipulação de listas e estados dinâmicos. |
-| **💬 [Projeto Frases](./apps/projeto-frases)** | Gerador de frases aleatórias para praticar `useState`. |
-| **🎂 [Descubra a idade](./apps/descubra-idade)** | Calculadora de idade com foco em performance (`useCallback`). |
+| :--- | :--- |
+| **🏠 [Hub Principal (Portfólio)](./apps/hub-main)** | Interface central (Spotlight Effect) que conecta todos os laboratórios.<br>💻 `React` `TypeScript` `Tailwind v4` |
+| **🔗 [Dev Link Hub](./apps/etanol-ou-gasolina)** | Plataforma de agregação de links personalizada com gerenciamento de conteúdo em tempo real via Firebase Firestore.<br>💻 `React` `TypeScript` `Firebase` |
+| **📝 [CriptoApp](./apps/lista-tarefas)** | Consumo de API em tempo real (CoinCap) com paginação infinita (Load More).<br>💻 `React` `TypeScript` `API REST` |
 
 ---
 
