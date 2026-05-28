@@ -21,8 +21,8 @@ Abaixo estão os projetos desenvolvidos, localizados na pasta `/apps`:
 | Projeto | Descrição |
 | :--- | :--- |
 | **🏠 [Hub Principal (Portfólio)](./apps/hub-main)** | Interface central (Spotlight Effect) que conecta todos os laboratórios.<br>💻 `React` `TypeScript` `Tailwind v4` |
-| **🔗 [Dev Link Hub](./apps/etanol-ou-gasolina)** | Plataforma de agregação de links personalizada com gerenciamento de conteúdo em tempo real via Firebase Firestore.<br>💻 `React` `TypeScript` `Firebase` |
-| **📝 [CriptoApp](./apps/lista-tarefas)** | Consumo de API em tempo real (CoinCap) com paginação infinita (Load More).<br>💻 `React` `TypeScript` `API REST` |
+| **🔗 [Dev Link Hub](./apps/devlink)** | Plataforma de agregação de links personalizada com gerenciamento de conteúdo em tempo real via Firebase Firestore.<br>💻 `React` `TypeScript` `Firebase` |
+| **📝 [CriptoApp](./apps/criptoapp)** | Consumo de API em tempo real (CoinCap) com paginação infinita (Load More).<br>💻 `React` `TypeScript` `API REST` |
 
 ---
 
