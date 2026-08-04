@@ -44,7 +44,7 @@ export function Login() {
             
             {/* Logo com espaçamento e leve destaque */}
             <div className="mb-3 flex flex-col items-center">
-                <img src={logoImg} alt="fjusoccer" className="w-64 max-w-xs drop-shadow-md mt-[-20px]" />
+                <img src={logoImg} alt="fjusoccer" className="w-64 max-w-xs drop-shadow-md mt-[-40px]" />
             </div>
 
             {/* Card do formulário com efeito Glassmorphism */}
