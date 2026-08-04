@@ -39,7 +39,7 @@ export function Register() {
     }
 
     return (
-        <main className="min-h-screen flex flex-col justify-center items-center px-4 py-8">
+        <main className="min-h-screen flex flex-col justify-center items-center 5">
             
             {/* Logo com espaçamento e leve destaque */}
             <div className="mb-5 flex flex-col items-center">

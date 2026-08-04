@@ -40,15 +40,15 @@ export function Login() {
     }
 
     return (
-        <main className="min-h-screen flex flex-col justify-center items-center">
+        <main className="min-h-screen flex flex-col justify-center items-center px-5">
             
             {/* Logo com espaçamento e leve destaque */}
-            <div className="mb-5 flex flex-col items-center">
+            <div className="mb-3 flex flex-col items-center">
                 <img src={logoImg} alt="fjusoccer" className="w-64 max-w-xs drop-shadow-md mt-[-20px]" />
             </div>
 
             {/* Card do formulário com efeito Glassmorphism */}
-            <form className="bg-white/95 backdrop-blur-md p-8 flex flex-col gap-4 w-full max-w-md rounded-2xl shadow-2xl border border-white/10" onSubmit={handleSubmit(formSubmit)}>
+            <form className="bg-white/95 backdrop-blur-md p-7 flex flex-col gap-3 w-full max-w-md rounded-2xl shadow-2xl border border-white/10" onSubmit={handleSubmit(formSubmit)}>
                 <div className="flex flex-col gap-1 mb-2">
                     <h1 className="text-2xl font-bold text-zinc-900">Bem-vindo de volta</h1>
                     <p className="text-sm text-zinc-500">Faça login para acessar sua conta</p>
