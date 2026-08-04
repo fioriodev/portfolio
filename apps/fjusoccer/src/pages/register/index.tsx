@@ -42,8 +42,8 @@ export function Register() {
         <main className="min-h-screen flex flex-col justify-center items-center px-4 py-8">
             
             {/* Logo com espaçamento e leve destaque */}
-            <div className="mb-8 flex flex-col items-center">
-                <img src={logoImg} alt="fjusoccer" className="w-64 max-w-xs drop-shadow-md" />
+            <div className="mb-5 flex flex-col items-center">
+                <img src={logoImg} alt="fjusoccer" className="w-64 max-w-xs drop-shadow-md mt-[-20px]" />
             </div>
 
             {/* Card do formulário com efeito Glassmorphism */}
