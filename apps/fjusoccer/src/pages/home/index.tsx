@@ -1,10 +1,9 @@
-import { Link } from "react-router-dom"
 import { Container } from "../../components/container"
-import { FiUser, FiLogIn } from "react-icons/fi"
+import { FiUser } from "react-icons/fi"
 import logoImg from './../../assets/logo.png'
 import { Panel } from "../../components/panel"
 
-export function Home() {
+export function Home() {    
     return (
         <main>
 
