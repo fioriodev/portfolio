@@ -10,6 +10,24 @@ import { auth } from '../../services/firebaseConnection'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 
 import { useNavigate } from 'react-router-dom'
+import { useContext, useState, type ChangeEvent } from 'react'
+import { UserContextData } from '../../contexts'
+
+import { FiUpload, FiTrash } from 'react-icons/fi'
+
+import { db } from '../../services/firebaseConnection'
+import { setDoc, doc } from 'firebase/firestore'
+
+import { storage } from '../../services/firebaseConnection'
+import { uploadBytes, ref, getDownloadURL, deleteObject } from 'firebase/storage'
+
+interface ImageItemProps {
+    uid: string;
+    name: string | null;
+    previewUrl: string;
+    url: string;
+    imagePath?: string;
+}
 
 const schema = z.object({
     name: z.string().nonempty("Campo nome obrigatório"),
@@ -25,17 +43,97 @@ export function Register() {
         mode: "onChange"
     })
     const navigate = useNavigate()
+    const { setInfoUser, user } = useContext(UserContextData)
+    const[userImage, setUserImage] = useState<ImageItemProps | null>()
 
-    function formSubmit(data: FormData) {
+    async function formSubmit(data: FormData) {
         createUserWithEmailAndPassword(auth, data.email, data.password)
         .then(async(user) => {
-            console.log(user)
             await updateProfile(user.user, {
                 displayName: data.name
             })
+            setInfoUser({
+                uid: user.user.uid,
+                name: user.user.displayName,
+                email: user.user.email
+            })
+
+            // Salva no Firestore usando o UID exato do Auth como ID do documento
+            await setDoc(doc(db, "users" , user.user.uid), {
+                name: data.name,
+                email: data.email,
+                imageProfile: {
+                    url: userImage?.url || "",
+                    name: userImage?.name || ""
+                }
+            })
+
             alert("Cadastrado com Sucesso!")
             navigate("/", { replace: true })
         })
+        .catch(async (error) => {
+            // Se der erro no cadastro, limpa a imagem órfã do Storage
+            if (userImage?.imagePath) {
+                try {
+                    const imageRef = ref(storage, userImage.imagePath)
+                    await deleteObject(imageRef)
+                    console.log("Imagem órfã deletada com sucesso do Storage.")
+                } catch (deleteError) {
+                    console.log("Erro ao tentar deletar a imagem órfã:", deleteError)
+                }
+            }
+
+            alert("Ocorreu um erro ao cadastrar, tente novamente")
+            console.log(error)
+        })
+    }
+
+    async function handleUpload(image: File) {
+        // Criamos o caminho único do arquivo para o storage
+        const imageName = `${Date.now()}_${image.name}`
+        const imagePath = `/users/temp/${imageName}`
+        const uploadRef = ref(storage, imagePath)
+
+        try {
+            const snapshot = await uploadBytes(uploadRef, image)
+            const downloadUrl = await getDownloadURL(snapshot.ref)
+
+            setUserImage({
+                uid: "", // Será preenchido ao concluir o cadastro
+                name: image.name,
+                previewUrl: URL.createObjectURL(image),
+                url: downloadUrl,
+                imagePath: imagePath // Essencial para salvar o caminho e permitir deletar se der erro
+            })
+        } catch (error) {
+            console.log("Erro ao enviar a imagem:", error)
+            alert("Erro ao fazer o upload da imagem.")
+        }
+    }
+
+    async function handleFile(e: ChangeEvent<HTMLInputElement>) {
+        if(e.target.files && e.target.files[0]) {
+            const image = e.target.files[0]
+            
+            if(image.type === 'image/png' || image.type === 'image/jpeg') {
+                await handleUpload(image)
+            } else {
+                alert("Insira imagem JPEG ou PNG para continuar")
+            }
+        }
+    }
+
+    async function handleDeleteImagem(image: ImageItemProps) {
+        const imagePath = `/users/${user?.uid}/${image.name}`
+
+        const imageRef = ref(storage, imagePath)
+
+        try {
+            await deleteObject(imageRef)
+            setUserImage(null)
+        } catch {
+            alert("ERRO AO DELETAR IMAGEM")
+        }
     }
 
     return (
@@ -52,6 +150,27 @@ export function Register() {
                     <h1 className="text-2xl font-bold text-zinc-900">Junte-se ao time</h1>
                     <p className="text-sm text-zinc-500">Crie sua conta e comece a acompanhar tudo</p>
                 </div>
+
+                {!userImage?.previewUrl && (
+                    <button className="border border-mist-300 flex flex-col justify-center items-center h-40 rounded-md w-full relative overflow-hidden">
+                        <div className="absolute flex flex-col justify-center items-center">
+                            <FiUpload size={30}/>
+                            <span className="text-sm">Insira a foto de perfil</span>
+                        </div>
+                        <div className="h-100 w-full">
+                            <input type="file" accept="image" className="opacity-0 w-full h-100 cursor-pointer" onChange={handleFile}/>
+                        </div>
+                    </button>
+                )}
+
+                {userImage?.previewUrl && (
+                    <div className="relative">
+                        <img src={userImage.previewUrl} alt="foto-perfil" className="w-50 mx-auto object-cover rounded-full" />
+                        <button className="absolute top-0 left-0 bg-black p-1 rounded-md cursor-pointer hover:bg-red-800 active:bg-black" onClick={() => handleDeleteImagem(userImage)}>
+                            <FiTrash size={20} color="white"/>
+                        </button>
+                    </div>
+                )}
 
                 <Input
                     type="string"

@@ -10,6 +10,9 @@ import { auth } from '../../services/firebaseConnection'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 
+import { useContext } from 'react'
+import { UserContextData } from '../../contexts'
+
 const schema = z.object({
     email: z.email("E-mail inválido").nonempty("Campo e-mail obrigatório"),
     password: z.string().nonempty("Campo senha obrigatório")
@@ -23,6 +26,7 @@ export function Login() {
         mode: "onChange"
     })
     const navigate = useNavigate()
+    const{ setInfoUser } = useContext(UserContextData)
 
     function formSubmit(data: FormData) {
         signInWithEmailAndPassword(auth, data.email, data.password)
@@ -32,6 +36,11 @@ export function Login() {
                 email: user.user.email
             }
             localStorage.setItem("@User", JSON.stringify(UserData))
+            setInfoUser({
+                uid: user.user.uid,
+                name: user.user.displayName,
+                email: user.user.email
+            })
             navigate("/", { replace: true })
         })
         .catch(() => {
