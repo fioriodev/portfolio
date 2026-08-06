@@ -41,7 +41,7 @@ export function Login() {
                 name: user.user.displayName,
                 email: user.user.email
             })
-            navigate("/", { replace: true })
+            navigate("/feed", { replace: true })
         })
         .catch(() => {
             alert("Usuário não cadastrado ou dados incorretos, tente novamente ou crie uma conta")

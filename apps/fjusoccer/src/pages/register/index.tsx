@@ -69,7 +69,7 @@ export function Register() {
             })
 
             alert("Cadastrado com Sucesso!")
-            navigate("/", { replace: true })
+            navigate("/feed", { replace: true })
         })
         .catch(async (error) => {
             // Se der erro no cadastro, limpa a imagem órfã do Storage
