@@ -79,7 +79,7 @@ export function Header() {
                         </Link>
                         
                         <Link 
-                            to="/login" 
+                            to="/" 
                             className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
                         >
                             🚪 Sair
