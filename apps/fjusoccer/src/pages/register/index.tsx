@@ -43,7 +43,7 @@ export function Register() {
         mode: "onChange"
     })
     const navigate = useNavigate()
-    const { setInfoUser, user } = useContext(UserContextData)
+    const { setInfoUser } = useContext(UserContextData)
     const[userImage, setUserImage] = useState<ImageItemProps | null>()
 
     async function formSubmit(data: FormData) {
@@ -124,14 +124,23 @@ export function Register() {
     }
 
     async function handleDeleteImagem(image: ImageItemProps) {
-        const imagePath = `/users/${user?.uid}/${image.name}`
+    // Usa o imagePath correto que foi salvo durante o upload (/users/temp/...)
+        console.log(image)
+        const pathToDelete = image.imagePath
 
-        const imageRef = ref(storage, imagePath)
+        if (!pathToDelete) {
+            alert("Caminho da imagem não encontrado.")
+            return
+        }
+
+        const imageRef = ref(storage, pathToDelete)
 
         try {
             await deleteObject(imageRef)
             setUserImage(null)
-        } catch {
+            console.log("Imagem deletada com sucesso!")
+        } catch (error) {
+            console.log("Erro detalhado:", error)
             alert("ERRO AO DELETAR IMAGEM")
         }
     }
@@ -166,7 +175,7 @@ export function Register() {
                 {userImage?.previewUrl && (
                     <div className="relative">
                         <img src={userImage.previewUrl} alt="foto-perfil" className="w-50 mx-auto object-cover rounded-full" />
-                        <button className="absolute top-0 left-0 bg-black p-1 rounded-md cursor-pointer hover:bg-red-800 active:bg-black" onClick={() => handleDeleteImagem(userImage)}>
+                        <button type="button" className="absolute top-0 left-0 bg-black p-1 rounded-md cursor-pointer hover:bg-red-800 active:bg-black" onClick={() => handleDeleteImagem(userImage)}>
                             <FiTrash size={20} color="white"/>
                         </button>
                     </div>
@@ -207,7 +216,7 @@ export function Register() {
             {/* Rodapé do card */}
             <p className="mt-6 text-zinc-400 text-sm select-none">
                 Já possui uma conta? {' '}
-                <Link to="/login" className="font-medium text-white hover:underline transition-colors">
+                <Link to="/" className="font-medium text-white hover:underline transition-colors">
                     Faça login
                 </Link>
             </p>
