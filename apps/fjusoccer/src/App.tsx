@@ -7,6 +7,7 @@ import { Dashboard } from "./pages/dashboard";
 import { New } from "./pages/dashboard/new";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
+import { Goals } from "./pages/goals";
 
 export const router = createBrowserRouter([
     {
@@ -27,6 +28,10 @@ export const router = createBrowserRouter([
             {
                 path: "/dashboard/new",
                 element: <New/>
+            },
+            {
+                path: "/artilheiros",
+                element: <Goals/>
             }
         ]
     },

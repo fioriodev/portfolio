@@ -8,12 +8,72 @@ import Levi from '/levi.png'
 import Gade from '/gade.png'
 import Efraim from '/efraim.png'
 
+import { useContext, useEffect, useState } from 'react'
+import { UserContextData } from '../../contexts'
+import { db } from '../../services/firebaseConnection'
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore'
+
+interface TopScorerProps {
+    name: string;
+    team: string;
+    goals: number;
+}
+
 export function Home() {
+    const { dates, fetchTotalTeams } = useContext(UserContextData)
+    const [topScorer, setTopScorer] = useState<TopScorerProps | null>(null)
+    const [totalGoalsSum, setTotalGoalsSum] = useState<number>(0)
+
+    // Atualiza os dados gerais, busca o artilheiro e a soma total de gols ao carregar a página
+    useEffect(() => {
+        fetchTotalTeams()
+        loadScorersData()
+    }, [])
+
+    async function loadScorersData() {
+        try {
+            const scorersRef = collection(db, "scorers")
+            const snapshot = await getDocs(scorersRef)
+
+            let sumGoals = 0
+            let bestScorer: TopScorerProps | null = null
+            let maxGoals = -1
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data()
+                const goals = Number(data.goals) || 0
+
+                // Soma para o total geral de gols do campeonato
+                sumGoals += goals
+
+                // Identifica o artilheiro (maior número de gols)
+                if (goals > maxGoals) {
+                    maxGoals = goals
+                    bestScorer = {
+                        name: data.name,
+                        team: data.team,
+                        goals: goals
+                    }
+                }
+            })
+
+            setTotalGoalsSum(sumGoals)
+
+            if (bestScorer) {
+                setTopScorer(bestScorer)
+            } else {
+                setTopScorer({ name: "Nenhum cadastrado", team: "-", goals: 0 })
+            }
+
+        } catch (error) {
+            console.log("Erro ao carregar dados da artilharia:", error)
+        }
+    }
 
     const stats = [
-        { label: 'Times Inscritos', value: '06', icon: '👥', color: 'bg-blue-50 text-blue-600' },
+        { label: 'Times Inscritos', value: dates?.qtdTeams || '00', icon: '👥', color: 'bg-blue-50 text-blue-600' },
         { label: 'Partidas Jogadas', value: '00/11', icon: '⚡', color: 'bg-emerald-50 text-emerald-600' },
-        { label: 'Gols Marcados', value: '00', icon: '⚽', color: 'bg-amber-50 text-amber-600' },
+        { label: 'Gols Marcados', value: totalGoalsSum, icon: '⚽', color: 'bg-amber-50 text-amber-600' },
         { label: 'Próxima Rodada', value: 'Sábado, 29/08', icon: '📅', color: 'bg-purple-50 text-purple-600' },
     ]
 
@@ -124,12 +184,12 @@ export function Home() {
                                                 ⚽
                                             </div>
                                             <div>
-                                                <h4 className="font-bold text-sm text-zinc-900">Carlos Silva</h4>
-                                                <p className="text-xs text-zinc-500">Aser</p>
+                                                <h4 className="font-bold text-sm text-zinc-900">{topScorer?.name || "Carregando..."}</h4>
+                                                <p className="text-xs text-zinc-500">{topScorer?.team || "-"}</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <span className="text-lg font-extrabold text-zinc-900">0</span>
+                                            <span className="text-lg font-extrabold text-zinc-900">{topScorer ? topScorer.goals : 0}</span>
                                             <p className="text-[10px] uppercase font-semibold text-zinc-400">Gols</p>
                                         </div>
                                     </div>

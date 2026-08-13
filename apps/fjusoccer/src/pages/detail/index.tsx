@@ -40,7 +40,7 @@ interface playerProps {
     id: string;
     name: string;
     imagePlayer: string;
-    imagePath?: string; // Adicionado para guardar a referência no Storage
+    imagePath?: string;
     posicao: string;
     numero: string;
     ritmo: string;
@@ -115,7 +115,7 @@ export function Detail() {
                 id: docSnap.id,
                 name: docSnap.data().name,
                 imagePlayer: docSnap.data().imagePlayer,
-                imagePath: docSnap.data().imagePath, // Pega o caminho salvo no banco
+                imagePath: docSnap.data().imagePath,
                 posicao: docSnap.data().posicao,
                 numero: docSnap.data().number,
                 ritmo: docSnap.data().ritmo,
@@ -191,7 +191,7 @@ export function Detail() {
 
         if(!team?.name) return
 
-        // Salvando o imagePath junto com os dados do jogador
+        // 1. Cadastra o jogador na coleção de players do time
         addDoc(collection(db, "players"), {
             name: data.name,
             posicao: data.position,
@@ -203,10 +203,19 @@ export function Detail() {
             defesa: data.def,
             fisico: data.fis,
             imagePlayer: imagePlayer?.url,
-            imagePath: imagePlayer?.imagePath, // Salva o caminho para poder apagar depois
+            imagePath: imagePlayer?.imagePath,
             team: team.name
         })
         .then(() => {
+            // 2. ADICIONA AUTOMATICAMENTE NA ARTILHARIA COM 0 GOLS
+            addDoc(collection(db, "scorers"), {
+                name: data.name,
+                team: team.name,
+                goals: 0
+            }).catch((err) => {
+                console.log("Erro ao cadastrar na artilharia:", err)
+            })
+
             reset()
             setImagePlayer(null)
             loadPlayers(team.name)
@@ -219,16 +228,25 @@ export function Detail() {
 
     async function handleDeletePlayer(player: playerProps) {
         try {
-            // 1. Se o jogador tiver o caminho da imagem, deleta do Storage primeiro
+            // 1. Deleta a imagem do Storage se existir
             if (player.imagePath) {
                 const imageRef = ref(storage, player.imagePath)
                 await deleteObject(imageRef)
             }
 
-            // 2. Deleta o documento do Firestore
+            // 2. Deleta o documento do jogador na coleção "players"
             await deleteDoc(doc(db, "players", player.id))
 
-            // 3. Atualiza o estado local removendo o jogador da tela
+            // 3. Procura e deleta o jogador correspondente na coleção "scorers" (Artilharia)
+            const scorersRef = collection(db, "scorers")
+            const q = query(scorersRef, where("name", "==", player.name), where("team", "==", team?.name))
+            const querySnapshot = await getDocs(q)
+            
+            querySnapshot.forEach(async (scorerDoc) => {
+                await deleteDoc(doc(db, "scorers", scorerDoc.id))
+            })
+
+            // 4. Atualiza o estado local removendo o jogador da tela
             setPlayers(players.filter(p => p.id !== player.id))
             alert("Atleta e imagem removidos com sucesso!")
         } catch (error) {
