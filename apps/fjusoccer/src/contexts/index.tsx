@@ -2,9 +2,9 @@ import { createContext } from "react";
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 
-import { auth, db } from "../services/firebaseConnection"; // <-- Certifique-se de importar o db aqui
+import { auth, db } from "../services/firebaseConnection";
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, getDocs } from "firebase/firestore"; // <-- Importe do firestore
+import { collection, getDocs } from "firebase/firestore";
 
 interface UserContextProps {
     signed: boolean;
@@ -12,7 +12,7 @@ interface UserContextProps {
     setInfoUser: ({uid, name, email}:UserProps) => void;
     user: UserProps | null;
     dates: dataProps;
-    fetchTotalTeams: () => void; // <-- Adicionado para poder chamar de outras telas se quiser
+    fetchTotalTeams: () => void;
     totalGoals: string;
     fetchTotalGoals: () => void;
 }
@@ -35,13 +35,11 @@ function UserProvider({children}: {children: ReactNode}) {
     const [dates, setDates] = useState<dataProps>({ qtdTeams: '00' })
     const [totalGoals, setTotalGoals] = useState<string>("00")
 
-    // Função centralizada para buscar a quantidade de times direto do Firebase
     async function fetchTotalTeams() {
         try {
             const querySnapshot = await getDocs(collection(db, "teams"));
-            const total = querySnapshot.size; // Pega a quantidade exata de documentos na coleção
+            const total = querySnapshot.size;
             
-            // Formata com zero à esquerda se for menor que 10 (ex: "02")
             const formattedTotal = total < 10 ? `0${total}` : `${total}`;
 
             setDates({
@@ -60,7 +58,6 @@ function UserProvider({children}: {children: ReactNode}) {
                     name: user.displayName,
                     email: user.email
                 })
-                // Busca a quantidade de times assim que o usuário estiver logado
                 fetchTotalTeams();
                 fetchTotalGoals();
             } else {
@@ -99,7 +96,16 @@ function UserProvider({children}: {children: ReactNode}) {
     }
 
     return (
-        <UserContextData.Provider value={{ signed: !!user, loading, setInfoUser, user, dates, fetchTotalTeams, fetchTotalGoals }}>
+        <UserContextData.Provider value={{ 
+            signed: !!user, 
+            loading, 
+            setInfoUser, 
+            user, 
+            dates, 
+            fetchTotalTeams, 
+            totalGoals,       // <--- ADICIONADO AQUI
+            fetchTotalGoals 
+        }}>
             {children}
         </UserContextData.Provider>
     )
