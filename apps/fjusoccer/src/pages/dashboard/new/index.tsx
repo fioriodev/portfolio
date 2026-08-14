@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FiUpload, FiTrash } from 'react-icons/fi'
 import { db, storage } from '../../../services/firebaseConnection'
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
-import { addDoc, collection } from 'firebase/firestore'
+import { addDoc, collection, setDoc, doc } from 'firebase/firestore'
 import { UserContextData } from '../../../contexts'
 import { useNavigate } from 'react-router-dom'
 import { Panel } from '../../../components/panel'
@@ -20,8 +20,8 @@ interface ImageItemProps {
 }
 
 const schema = z.object({
-    name: z.string().nonempty("O nome do time é obrigatório"),
-    manager: z.string().nonempty("O nome do responsável/técnico é obrigatório"),
+    name: z.string().min(1, "O nome do time é obrigatório"),
+    manager: z.string().min(1, "O nome do responsável/técnico é obrigatório"),
 })
 
 type FormData = z.infer<typeof schema>
@@ -87,10 +87,11 @@ export function New() {
 
     async function handleRegisterTeam(data: FormData) {
         try {
-            // Aplicamos o .trim() aqui para garantir que espaços extras 
-            // não criem inconsistências no banco de dados.
-            await addDoc(collection(db, "teams"), {
-                name: data.name.trim(), 
+            const teamName = data.name.trim()
+
+            // 1. Salva na coleção "teams" (para o painel de gerenciamento)
+            const docRef = await addDoc(collection(db, "teams"), {
+                name: teamName, 
                 manager: data.manager.trim(),
                 imageLogo: {
                     url: teamImage?.url || "",
@@ -99,6 +100,19 @@ export function New() {
                 },
                 uid: user?.uid,
                 createdAt: new Date(),
+            })
+
+            // 2. Salva/Inicializa automaticamente na coleção "standings" (para aparecer na Tabela do campeonato)
+            // Usamos o mesmo ID gerado no addDoc para manter a referência sincronizada
+            await setDoc(doc(db, "standings", docRef.id), {
+                name: teamName,
+                pts: 0,
+                j: 0,
+                v: 0,
+                e: 0,
+                d: 0,
+                sg: 0,
+                teamId: docRef.id
             })
 
             alert("Time cadastrado com sucesso!")
@@ -127,9 +141,9 @@ export function New() {
                             {!teamImage?.previewUrl ? (
                                 <button 
                                     type="button" 
-                                    className="border-2 border-dashed border-zinc-300 flex flex-col justify-center items-center h-36 rounded-xl w-full relative overflow-hidden hover:border-zinc-400 transition-colors"
+                                    className="border-2 border-dashed border-zinc-300 flex flex-col justify-center items-center h-36 rounded-xl w-full relative overflow-hidden hover:border-zinc-400 transition-colors cursor-pointer"
                                 >
-                                    <div className="absolute flex flex-col justify-center items-center gap-1">
+                                    <div className="absolute flex flex-col justify-center items-center gap-1 pointer-events-none">
                                         <FiUpload size={24} className="text-zinc-500" />
                                         <span className="text-sm text-zinc-500">
                                             {uploading ? "Enviando..." : "Clique para enviar o escudo"}

@@ -46,10 +46,10 @@ export function Dashboard() {
         setTeams(listTeams)
     }
 
-    // Função de exclusão completa (Time + Players + Scorers + Goalkeepers)
+    // Função de exclusão completa (Time + Players + Scorers + Goalkeepers + Standings)
     async function handleDeleteTeam(team: teamProps) {
         const cleanName = team.name.trim(); // Garante consistência na busca
-        const confirmDelete = window.confirm(`Tem certeza que deseja excluir o time ${team.name}? Isso apagará todos os jogadores, goleiros e dados relacionados!`)
+        const confirmDelete = window.confirm(`Tem certeza que deseja excluir o time ${team.name}? Isso apagará todos os jogadores, goleiros, dados da tabela e registros relacionados!`)
         
         if (!confirmDelete) return
 
@@ -67,25 +67,33 @@ export function Dashboard() {
             // 2. Deleta o documento do time
             await deleteDoc(doc(db, "teams", team.uid))
 
-            // 3. Deleta jogadores (collection "players")
+            // 3. Deleta da tabela de classificação (collection "standings")
+            // Caso sua tabela utilize o ID do time como ID do documento:
+            try {
+                await deleteDoc(doc(db, "standings", team.uid))
+            } catch (err) {
+                console.log("Erro ao deletar da tabela standings:", err)
+            }
+
+            // 4. Deleta jogadores (collection "players")
             const playersRef = collection(db, "players")
             const qPlayers = query(playersRef, where("team", "==", cleanName))
             const playersSnapshot = await getDocs(qPlayers)
             await Promise.all(playersSnapshot.docs.map((item) => deleteDoc(doc(db, "players", item.id))))
 
-            // 4. Deleta artilheiros (collection "scorers")
+            // 5. Deleta artilheiros (collection "scorers")
             const scorersRef = collection(db, "scorers")
             const qScorers = query(scorersRef, where("team", "==", cleanName))
             const scorersSnapshot = await getDocs(qScorers)
             await Promise.all(scorersSnapshot.docs.map((item) => deleteDoc(doc(db, "scorers", item.id))))
 
-            // 5. Deleta goleiros (collection "goalkeepers")
+            // 6. Deleta goleiros (collection "goalkeepers")
             const gkRef = collection(db, "goalkeepers")
             const qGk = query(gkRef, where("team", "==", cleanName))
             const gkSnapshot = await getDocs(qGk)
             await Promise.all(gkSnapshot.docs.map((item) => deleteDoc(doc(db, "goalkeepers", item.id))))
 
-            // 6. Atualiza a lista na tela
+            // 7. Atualiza a lista na tela
             setTeams(teams.filter(item => item.uid !== team.uid))
             
             alert("Time e todos os seus dados vinculados foram removidos!")

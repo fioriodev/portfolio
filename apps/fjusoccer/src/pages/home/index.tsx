@@ -25,18 +25,66 @@ interface TopGoalkeeperProps {
     goalsAgainst: number;
 }
 
+interface StandingProps {
+    teamId: string;
+    name: string;
+    pts: number;
+    j: number;
+    v: number;
+    e: number;
+    d: number;
+    sg: number;
+}
+
 export function Home() {
     const { dates, fetchTotalTeams } = useContext(UserContextData)
     const [topScorer, setTopScorer] = useState<TopScorerProps | null>(null)
     const [topGoalkeeper, setTopGoalkeeper] = useState<TopGoalkeeperProps | null>(null)
     const [totalGoalsSum, setTotalGoalsSum] = useState<number>(0)
+    const [standings, setStandings] = useState<StandingProps[]>([])
 
-    // Atualiza os dados gerais, busca o artilheiro, o goleiro menos vazado e a soma total de gols ao carregar a página
+    // Carrega todos os dados ao abrir a página
     useEffect(() => {
         fetchTotalTeams()
         loadScorersData()
         loadGoalkeepersData()
+        loadStandingsData()
     }, [])
+
+    async function loadStandingsData() {
+        try {
+            const standingsRef = collection(db, "standings")
+            const snapshot = await getDocs(standingsRef)
+
+            let listStandings: StandingProps[] = []
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data()
+                listStandings.push({
+                    teamId: data.teamId || docSnap.id,
+                    name: data.name,
+                    pts: Number(data.pts) || 0,
+                    j: Number(data.j) || 0,
+                    v: Number(data.v) || 0,
+                    e: Number(data.e) || 0,
+                    d: Number(data.d) || 0,
+                    sg: Number(data.sg) || 0,
+                })
+            })
+
+            // Ordena os times: Primeiro por Pontos (decrescente), depois por Saldo de Gols (decrescente)
+            listStandings.sort((a, b) => {
+                if (b.pts !== a.pts) {
+                    return b.pts - a.pts
+                }
+                return b.sg - a.sg
+            })
+
+            setStandings(listStandings)
+        } catch (error) {
+            console.log("Erro ao carregar a classificação:", error)
+        }
+    }
 
     async function loadScorersData() {
         try {
@@ -51,10 +99,8 @@ export function Home() {
                 const data = docSnap.data()
                 const goals = Number(data.goals) || 0
 
-                // Soma para o total geral de gols do campeonato
                 sumGoals += goals
 
-                // Identifica o artilheiro (maior número de gols)
                 if (goals > maxGoals) {
                     maxGoals = goals
                     bestScorer = {
@@ -90,7 +136,6 @@ export function Home() {
                 const data = docSnap.data()
                 const goalsAgainst = Number(data.goalsAgainst) || 0
 
-                // Identifica o goleiro menos vazado (menor número de gols sofridos)
                 if (goalsAgainst < minGoals) {
                     minGoals = goalsAgainst
                     bestGoalkeeper = {
@@ -146,20 +191,10 @@ export function Home() {
         awayLogo: <img src={Naftali} alt="logo-equipe" className="w-12 h-12 object-contain"/>,
     }
 
-    const topStandings = [
-        { pos: 1, name: 'Benjamin', pts: 0, j: 0, sg: 0 },
-        { pos: 2, name: 'Naftali', pts: 0, j: 0, sg: 0 },
-        { pos: 3, name: 'Aser', pts: 0, j: 0, sg: 0 },
-        { pos: 4, name: 'Levi', pts: 0, j: 0, sg: 0 },
-        { pos: 5, name: 'Gade', pts: 0, j: 0, sg: 0 },
-        { pos: 6, name: 'Efraim', pts: 0, j: 0, sg: 0 },
-    ]
-
     return (
         <div className="min-h-screen bg-zinc-50 pb-16 pt-1">
             <Container>
 
-                {/* Botões de navegação para o Dashboard e Logout */}
                 <div className="flex items-center justify-center mt-5 w-2xl md:w-xl w-full mx-auto mb-10 bg-zinc-800 text-white uppercase">
                     <Link 
                         to="/dashboard" 
@@ -178,7 +213,7 @@ export function Home() {
                 
                 <main className="flex flex-col gap-8">
                     
-                    {/* 1. Cards de Indicadores (Estatísticas Rápidas) */}
+                    {/* Cards de Indicadores */}
                     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {stats.map((stat, index) => (
                             <div key={index} className="bg-white p-5 rounded-2xl shadow-sm border border-zinc-200/80 flex items-center gap-4 transition-all hover:border-zinc-300">
@@ -193,10 +228,9 @@ export function Home() {
                         ))}
                     </section>
 
-                    {/* Grid Principal: Próximo Jogo e Classificação Parcial */}
+                    {/* Grid Principal */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         
-                        {/* Coluna Esquerda/Centro: Próximo Jogo, Artilharia & Goleiro Menos Vazado */}
                         <div className="lg:col-span-2 flex flex-col gap-8">
                             
                             {/* Card do Próximo Jogo */}
@@ -233,7 +267,6 @@ export function Home() {
                             {/* Grid em 2 colunas para Artilheiro e Goleiro Menos Vazado */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 
-                                {/* Seção de Artilheiro */}
                                 <section className="bg-white p-6 rounded-2xl shadow-sm border border-zinc-200/80 flex flex-col justify-between">
                                     <h3 className="text-base font-bold text-zinc-900 flex items-center gap-2 mb-4">
                                         🏆 Artilheiro
@@ -255,7 +288,6 @@ export function Home() {
                                     </div>
                                 </section>
 
-                                {/* Seção de Goleiro Menos Vazado */}
                                 <section className="bg-white p-6 rounded-2xl shadow-sm border border-zinc-200/80 flex flex-col justify-between">
                                     <h3 className="text-base font-bold text-zinc-900 flex items-center gap-2 mb-4">
                                         🧤 Goleiro Menos Vazado
@@ -281,10 +313,10 @@ export function Home() {
 
                         </div>
 
-                        {/* Coluna Direita: Tabela Parcial */}
+                        {/* Coluna Direita: Tabela Parcial Dinâmica com Estilização Aprimorada */}
                         <div className="lg:col-span-1">
                             <section className="bg-white p-6 rounded-2xl shadow-sm border border-zinc-200/80 h-full flex flex-col">
-                                <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center justify-between mb-5">
                                     <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
                                         🛡️ Classificação
                                     </h3>
@@ -293,31 +325,58 @@ export function Home() {
                                     </Link>
                                 </div>
 
-                                <div className="flex flex-col flex-1 divide-y divide-zinc-100">
-                                    <div className="flex items-center justify-between text-xs font-bold text-zinc-400 pb-3">
-                                        <span>Time</span>
-                                        <div className="flex gap-4">
-                                            <span className="w-3 text-center">J</span>
-                                            <span className="w-4 text-center">SG</span>
-                                            <span className="w-5 text-center">PTS</span>
-                                        </div>
+                                <div className="flex flex-col flex-1">
+                                    {/* Cabeçalho da Tabela */}
+                                    <div className="grid grid-cols-12 items-center text-[11px] font-bold text-zinc-400 uppercase tracking-wider pb-3 border-b border-zinc-100 px-3">
+                                        <span className="col-span-7">Equipe</span>
+                                        <span className="col-span-2 text-center">J</span>
+                                        <span className="col-span-1 text-center">SG</span>
+                                        <span className="col-span-2 text-center">PTS</span>
                                     </div>
 
-                                    {topStandings.map((team) => (
-                                        <div key={team.pos} className="flex items-center justify-between py-3 text-sm">
-                                            <div className="flex items-center gap-3">
-                                                <span className={`w-6 text-center font-extrabold text-xs py-0.5 rounded ${team.pos <= 2 ? 'bg-emerald-50 text-emerald-600' : team.pos >= 5 ? 'bg-red-50 text-red-600' : 'text-zinc-500'}`}>
-                                                    {team.pos}º
-                                                </span>
-                                                <span className="font-semibold text-zinc-800">{team.name}</span>
-                                            </div>
-                                            <div className="flex gap-4 text-xs font-semibold text-zinc-600">
-                                                <span className="w-3 text-center">{team.j}</span>
-                                                <span className="w-4 text-center">{team.sg}</span>
-                                                <span className="w-5 text-center text-zinc-900 font-extrabold">{team.pts}</span>
-                                            </div>
-                                        </div>
-                                    ))}
+                                    {/* Corpo da Tabela */}
+                                    <div className="flex flex-col gap-1.5 mt-2">
+                                        {standings.length === 0 ? (
+                                            <p className="text-xs text-zinc-400 text-center py-8">Nenhum time cadastrado.</p>
+                                        ) : (
+                                            standings.map((team, index) => {
+                                                const pos = index + 1
+                                                return (
+                                                    <div 
+                                                        key={team.teamId} 
+                                                        className={`grid grid-cols-12 items-center py-2.5 px-3 rounded-xl transition-all border ${
+                                                            pos === 1 
+                                                                ? 'bg-amber-50/60 border-amber-200/70 shadow-2xs' 
+                                                                : pos === 2 
+                                                                ? 'bg-zinc-50/70 border-zinc-200/50' 
+                                                                : 'bg-white border-transparent hover:bg-zinc-50 hover:border-zinc-100'
+                                                        }`}
+                                                    >
+                                                        <div className="col-span-7 flex items-center gap-2.5">
+                                                            <span className={`w-6 h-6 flex items-center justify-center text-[11px] font-extrabold rounded-md shadow-2xs ${
+                                                                pos === 1 ? 'bg-amber-400 text-white' : 
+                                                                pos === 2 ? 'bg-zinc-300 text-zinc-800' : 
+                                                                pos === 3 ? 'bg-amber-700/20 text-amber-800' :
+                                                                'bg-zinc-100 text-zinc-500'
+                                                            }`}>
+                                                                {pos}
+                                                            </span>
+                                                            <span className="font-semibold text-sm text-zinc-800 truncate">{team.name}</span>
+                                                        </div>
+                                                        <div className="col-span-2 text-center text-xs font-medium text-zinc-500">
+                                                            {team.j}
+                                                        </div>
+                                                        <div className="col-span-1 text-center text-xs font-medium text-zinc-600">
+                                                            {team.sg}
+                                                        </div>
+                                                        <div className="col-span-2 text-center text-xs font-black text-zinc-900 bg-zinc-100/80 py-1 rounded-md">
+                                                            {team.pts}
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })
+                                        )}
+                                    </div>
                                 </div>
                             </section>
                         </div>

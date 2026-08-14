@@ -9,6 +9,7 @@ import { Login } from "./pages/login";
 import { Register } from "./pages/register";
 import { Goals } from "./pages/goals";
 import { Goalkeeper } from "./pages/goalkeeper";
+import { Tabela } from "./pages/tabela";
 
 export const router = createBrowserRouter([
     {
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
             {
                 path: "/rankgoleiros",
                 element: <Goalkeeper/>
+            },
+            {
+                path: "/tabela",
+                element: <Tabela/>
             }
         ]
     },
