@@ -68,23 +68,6 @@ export function Header() {
                         </h1>
                     </div>
                 </div>
-
-                {/* Botões de navegação para o Dashboard e Logout */}
-                    <div className="flex items-center justify-center mt-5 gap-3">
-                        <Link 
-                            to="/dashboard" 
-                            className="bg-zinc-900 hover:bg-zinc-800 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
-                        >
-                            ⚙️ Acessar Dashboard &gt;
-                        </Link>
-                        
-                        <Link 
-                            to="/" 
-                            className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
-                        >
-                            🚪 Sair
-                        </Link>
-                    </div>
             </Container>
         </header>
     )

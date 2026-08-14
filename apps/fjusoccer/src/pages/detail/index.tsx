@@ -216,6 +216,17 @@ export function Detail() {
                 console.log("Erro ao cadastrar na artilharia:", err)
             })
 
+            // 3. SE FOR GOLEIRO, ADICIONA AUTOMATICAMENTE NO RANKING DE GOLEIROS COM 0 GOLS SOFRIDOS
+            if (data.position === "Goleiro") {
+                addDoc(collection(db, "goalkeepers"), {
+                    name: data.name,
+                    team: team.name,
+                    goalsAgainst: 0
+                }).catch((err) => {
+                    console.log("Erro ao cadastrar nos goleiros:", err)
+                })
+            }
+
             reset()
             setImagePlayer(null)
             loadPlayers(team.name)
@@ -239,14 +250,25 @@ export function Detail() {
 
             // 3. Procura e deleta o jogador correspondente na coleção "scorers" (Artilharia)
             const scorersRef = collection(db, "scorers")
-            const q = query(scorersRef, where("name", "==", player.name), where("team", "==", team?.name))
-            const querySnapshot = await getDocs(q)
+            const qScorers = query(scorersRef, where("name", "==", player.name), where("team", "==", team?.name))
+            const snapshotScorers = await getDocs(qScorers)
             
-            querySnapshot.forEach(async (scorerDoc) => {
+            snapshotScorers.forEach(async (scorerDoc) => {
                 await deleteDoc(doc(db, "scorers", scorerDoc.id))
             })
 
-            // 4. Atualiza o estado local removendo o jogador da tela
+            // 4. Procura e deleta o goleiro correspondente na coleção "goalkeepers" (se ele for goleiro)
+            if (player.posicao === "Goleiro") {
+                const keepersRef = collection(db, "goalkeepers")
+                const qKeepers = query(keepersRef, where("name", "==", player.name), where("team", "==", team?.name))
+                const snapshotKeepers = await getDocs(qKeepers)
+                
+                snapshotKeepers.forEach(async (keeperDoc) => {
+                    await deleteDoc(doc(db, "goalkeepers", keeperDoc.id))
+                })
+            }
+
+            // 5. Atualiza o estado local removendo o jogador da tela
             setPlayers(players.filter(p => p.id !== player.id))
             alert("Atleta e imagem removidos com sucesso!")
         } catch (error) {

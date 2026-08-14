@@ -10,6 +10,7 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage
 import { addDoc, collection } from 'firebase/firestore'
 import { UserContextData } from '../../../contexts'
 import { useNavigate } from 'react-router-dom'
+import { Panel } from '../../../components/panel'
 
 interface ImageItemProps {
     name: string | null;
@@ -86,13 +87,15 @@ export function New() {
 
     async function handleRegisterTeam(data: FormData) {
         try {
+            // Aplicamos o .trim() aqui para garantir que espaços extras 
+            // não criem inconsistências no banco de dados.
             await addDoc(collection(db, "teams"), {
-                name: data.name,
-                manager: data.manager,
+                name: data.name.trim(), 
+                manager: data.manager.trim(),
                 imageLogo: {
                     url: teamImage?.url || "",
                     name: teamImage?.name || "",
-                    imagePath: teamImage?.imagePath || "" // <--- ADICIONE ESTA LINHA
+                    imagePath: teamImage?.imagePath || ""
                 },
                 uid: user?.uid,
                 createdAt: new Date(),
@@ -111,13 +114,13 @@ export function New() {
     return (
         <div className="min-h-screen bg-zinc-100 pb-12 pt-5">
             <Container>
+                <Panel/>
 
                 <div className="bg-white rounded-2xl p-7 mt-6 shadow-sm border border-zinc-200 max-w-2xl mx-auto">
                     <h1 className="text-2xl font-bold text-zinc-800 mb-6">Cadastrar Novo Time</h1>
 
                     <form onSubmit={handleSubmit(handleRegisterTeam)} className="flex flex-col gap-4">
                         
-                        {/* Área de Upload do Escudo do Time */}
                         <div className="flex flex-col gap-2">
                             <label className="text-sm font-medium text-zinc-700">Escudo do Time</label>
                             
@@ -158,7 +161,6 @@ export function New() {
                             )}
                         </div>
 
-                        {/* Nome do Time */}
                         <Input
                             type="text"
                             placeholder="Nome do Time (ex: Real Madrid FC)"
@@ -167,7 +169,6 @@ export function New() {
                             error={errors.name?.message}
                         />
 
-                        {/* Responsável / Técnico */}
                         <Input
                             type="text"
                             placeholder="Nome do Técnico ou Responsável"

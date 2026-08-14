@@ -7,6 +7,10 @@ export function Panel() {
                 Ir para Página Principal
             </Link>
 
+            <Link to="/dashboard" className="hover:bg-mist-700 text-white px-3 py-3.5 text-sm font-medium transition-colors w-full text-center uppercase">
+                Equipes
+            </Link>
+
             <Link to="/dashboard/new" 
                     className="hover:bg-mist-700 text-white px-3 py-3.5 text-sm font-medium transition-colors w-full text-center uppercase"
             >
@@ -19,11 +23,11 @@ export function Panel() {
                 Artilharia
             </Link>
 
-            <button 
+            <Link to="/rankgoleiros"
                 className="hover:bg-mist-700 text-white px-3 py-3.5 text-sm font-medium transition-colors w-full text-center uppercase"
             >
                 + Gol Sofrido (Goleiro)
-            </button>
+            </Link>
         </section>
     )
 }

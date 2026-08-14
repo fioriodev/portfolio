@@ -1,7 +1,7 @@
 import { Container } from '../../components/container'
 import { Panel } from '../../components/panel'
 import { db } from '../../services/firebaseConnection'
-import { getDocs, collection, query, orderBy, updateDoc, doc, increment } from 'firebase/firestore'
+import { getDocs, collection, query, orderBy, updateDoc, doc } from 'firebase/firestore'
 import { useState, useEffect, useContext } from 'react'
 import { UserContextData } from '../../contexts'
 
@@ -10,6 +10,7 @@ interface ScorerProps {
     name: string;
     team: string;
     goals: number;
+    photo: string;
 }
 
 export function Goals() {
@@ -22,37 +23,46 @@ export function Goals() {
 
     async function loadScorers() {
         const scorersRef = collection(db, "scorers")
-        const q = query(scorersRef, orderBy("goals", "desc")) // Ordena do artilheiro com mais gols para menos
-
+        const playersRef = collection(db, "players")
+        
+        const q = query(scorersRef, orderBy("goals", "desc"))
         const snapshot = await getDocs(q)
+        
+        const playersSnapshot = await getDocs(playersRef)
+        const playersData = playersSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }))
+
         let list: ScorerProps[] = []
 
-        snapshot.forEach((doc) => {
+        snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            
+            // Procura o jogador correspondente na coleção 'players' pelo nome
+            const playerMatch: any = playersData.find((p: any) => p.name === data.name)
+
             list.push({
-                uid: doc.id,
-                name: doc.data().name,
-                team: doc.data().team,
-                goals: doc.data().goals
+                uid: docSnap.id,
+                name: data.name,
+                team: data.team,
+                goals: data.goals,
+                // Alterado de '.photo' para '.imagePlayer', que é o nome correto no seu Firebase
+                photo: playerMatch?.imagePlayer || "" 
             })
         })
 
         setScorers(list)
     }
 
-    // Função para adicionar 1 gol ao jogador rapidamente
     async function handleAddGoal(id: string, currentGoals: number) {
         try {
             const scorerDocRef = doc(db, "scorers", id)
-            
-            // Incrementa +1 no banco de dados
             await updateDoc(scorerDocRef, {
                 goals: currentGoals + 1
             })
-
-            // Atualiza a lista local e o contexto geral da Home
             loadScorers()
             fetchTotalGoals()
-            
         } catch (error) {
             console.log("Erro ao atualizar gols:", error)
         }
@@ -62,27 +72,36 @@ export function Goals() {
         <div className="min-h-screen bg-zinc-100 pb-12 pt-5">
             <Container>
                 <Panel />
-
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-zinc-200/80 my-6">
                     <h2 className="text-xl font-bold text-zinc-900 mb-6">Artilharia do Campeonato</h2>
-
                     <div className="flex flex-col gap-4">
                         {scorers.map((scorer) => (
                             <div key={scorer.uid} className="flex items-center justify-between p-4 bg-zinc-50 rounded-xl border border-zinc-100">
-                                <div>
-                                    <h3 className="font-bold text-zinc-900">{scorer.name}</h3>
-                                    <p className="text-xs text-zinc-500">{scorer.team}</p>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-sm bg-zinc-200 flex-shrink-0">
+                                        {scorer.photo ? (
+                                            <img src={scorer.photo} alt={scorer.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-xs font-bold text-zinc-500">
+                                                {scorer.name.charAt(0)}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-zinc-900">{scorer.name}</h3>
+                                        <p className="text-xs text-zinc-500 font-medium">{scorer.team}</p>
+                                    </div>
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <div className="text-right">
                                         <span className="text-lg font-extrabold text-zinc-900">{scorer.goals}</span>
-                                        <p className="text-[10px] uppercase font-semibold text-zinc-400">Gols</p>
+                                        <p className="text-[10px] uppercase font-bold text-zinc-400">Gols</p>
                                     </div>
                                     <button 
                                         onClick={() => handleAddGoal(scorer.uid, scorer.goals)}
-                                        className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg text-sm transition-colors cursor-pointer"
+                                        className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all"
                                     >
-                                        + Gol ⚽
+                                        +1
                                     </button>
                                 </div>
                             </div>

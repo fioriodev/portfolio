@@ -11,7 +11,7 @@ import Efraim from '/efraim.png'
 import { useContext, useEffect, useState } from 'react'
 import { UserContextData } from '../../contexts'
 import { db } from '../../services/firebaseConnection'
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore'
+import { collection, getDocs } from 'firebase/firestore'
 
 interface TopScorerProps {
     name: string;
@@ -19,15 +19,23 @@ interface TopScorerProps {
     goals: number;
 }
 
+interface TopGoalkeeperProps {
+    name: string;
+    team: string;
+    goalsAgainst: number;
+}
+
 export function Home() {
     const { dates, fetchTotalTeams } = useContext(UserContextData)
     const [topScorer, setTopScorer] = useState<TopScorerProps | null>(null)
+    const [topGoalkeeper, setTopGoalkeeper] = useState<TopGoalkeeperProps | null>(null)
     const [totalGoalsSum, setTotalGoalsSum] = useState<number>(0)
 
-    // Atualiza os dados gerais, busca o artilheiro e a soma total de gols ao carregar a página
+    // Atualiza os dados gerais, busca o artilheiro, o goleiro menos vazado e a soma total de gols ao carregar a página
     useEffect(() => {
         fetchTotalTeams()
         loadScorersData()
+        loadGoalkeepersData()
     }, [])
 
     async function loadScorersData() {
@@ -67,6 +75,40 @@ export function Home() {
 
         } catch (error) {
             console.log("Erro ao carregar dados da artilharia:", error)
+        }
+    }
+
+    async function loadGoalkeepersData() {
+        try {
+            const goalkeepersRef = collection(db, "goalkeepers")
+            const snapshot = await getDocs(goalkeepersRef)
+
+            let bestGoalkeeper: TopGoalkeeperProps | null = null
+            let minGoals = Infinity
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data()
+                const goalsAgainst = Number(data.goalsAgainst) || 0
+
+                // Identifica o goleiro menos vazado (menor número de gols sofridos)
+                if (goalsAgainst < minGoals) {
+                    minGoals = goalsAgainst
+                    bestGoalkeeper = {
+                        name: data.name,
+                        team: data.team,
+                        goalsAgainst: goalsAgainst
+                    }
+                }
+            })
+
+            if (bestGoalkeeper) {
+                setTopGoalkeeper(bestGoalkeeper)
+            } else {
+                setTopGoalkeeper({ name: "Nenhum cadastrado", team: "-", goalsAgainst: 0 })
+            }
+
+        } catch (error) {
+            console.log("Erro ao carregar dados dos goleiros:", error)
         }
     }
 
@@ -114,8 +156,26 @@ export function Home() {
     ]
 
     return (
-        <div className="min-h-screen bg-zinc-50 pb-16 pt-4">
+        <div className="min-h-screen bg-zinc-50 pb-16 pt-1">
             <Container>
+
+                {/* Botões de navegação para o Dashboard e Logout */}
+                <div className="flex items-center justify-center mt-5 w-2xl md:w-xl w-full mx-auto mb-10 bg-zinc-800 text-white uppercase">
+                    <Link 
+                        to="/dashboard" 
+                        className="hover:bg-zinc-700 flex-2 py-2.5 text-sm font-medium transition-colors flex justify-center"
+                    >
+                        Acessar Detalhes
+                    </Link>
+                    
+                    <Link 
+                        to="/" 
+                        className="hover:bg-red-900 flex-1 py-2.5 text-sm font-medium transition-colors flex justify-center"
+                    >
+                        Sair
+                    </Link>
+                </div>
+                
                 <main className="flex flex-col gap-8">
                     
                     {/* 1. Cards de Indicadores (Estatísticas Rápidas) */}
@@ -206,12 +266,12 @@ export function Home() {
                                                 🧱
                                             </div>
                                             <div>
-                                                <h4 className="font-bold text-sm text-zinc-900">Marcos Lima</h4>
-                                                <p className="text-xs text-zinc-500">Benjamin</p>
+                                                <h4 className="font-bold text-sm text-zinc-900">{topGoalkeeper?.name || "Carregando..."}</h4>
+                                                <p className="text-xs text-zinc-500">{topGoalkeeper?.team || "-"}</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <span className="text-lg font-extrabold text-zinc-900">0</span>
+                                            <span className="text-lg font-extrabold text-zinc-900">{topGoalkeeper ? topGoalkeeper.goalsAgainst : 0}</span>
                                             <p className="text-[10px] uppercase font-semibold text-zinc-400">Sofridos</p>
                                         </div>
                                     </div>

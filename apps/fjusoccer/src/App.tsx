@@ -8,6 +8,7 @@ import { New } from "./pages/dashboard/new";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
 import { Goals } from "./pages/goals";
+import { Goalkeeper } from "./pages/goalkeeper";
 
 export const router = createBrowserRouter([
     {
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
             {
                 path: "/artilheiros",
                 element: <Goals/>
+            },
+            {
+                path: "/rankgoleiros",
+                element: <Goalkeeper/>
             }
         ]
     },
