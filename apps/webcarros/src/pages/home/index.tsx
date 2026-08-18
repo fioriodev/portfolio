@@ -2,7 +2,65 @@ import { Container } from "../../components/container"
 import { Footer } from "../../components/footer"
 import { Link } from "react-router-dom"
 
+import { useState, useEffect } from "react"
+
+import { db } from "../../services/firebaseConnection"
+import { getDocs, collection, query, orderBy } from "firebase/firestore"
+
+interface carsProps {
+    ano: string;
+    cidade: string;
+    imagem: imageCars[];
+    km: string;
+    modelo: string;
+    nome: string;
+    valor: number;
+}
+
+type imageCars = {
+    name: string;
+    url: string
+}
+
 export function Home() {
+    const[cars, setCars] = useState<carsProps[]>([])
+    const[loadImages, setLoadImages] = useState<string[]>([])
+
+    useEffect(() => {
+        getCars()
+    }, [])
+
+    async function getCars() {
+        const docRef = collection(db, "cars")
+        const queryRef = query(docRef, orderBy("created", "asc"))
+
+        getDocs(queryRef)
+        .then((snapshot) => {
+            let carlists = [] as carsProps[]
+
+            snapshot.forEach(doc => {
+                carlists.push({
+                    nome: doc.data().nome,
+                    modelo: doc.data().modelo,
+                    ano: doc.data().ano,
+                    km: doc.data().km,
+                    valor: Number(doc.data().valor),
+                    cidade: doc.data().cidade,
+                    imagem: doc.data().imagem
+                })
+                console.log(carlists)
+                setCars(carlists)
+            })
+        })
+        .catch(() => {
+            alert("ERRO AO BUSCAR VEÍCULOS")
+        })
+    }
+
+    function handleImageLoad(name: string) {
+        setLoadImages(prevNames => [...prevNames, name])
+    }
+
     return (
         <main className="pt-20">
 
@@ -22,53 +80,24 @@ export function Home() {
 
                 <section className="mt-10 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-10">
 
-                    <Link to="/detail/porsche">
-                        <div className="bg-white rounded-xl overflow-hidden transition duration-150 hover:scale-101 active:scale-99">
-                            <img src="https://image.webmotors.com.br/_fotos/anunciousados/gigante/2026/202608/20260813/porsche-macan-turbo-eletrico-wmimagem13555497438.webp?s=fill&w=1920&h=1440&q=75" alt="foto-veiculo" />
-                            <h2 className="ml-3 mt-3 uppercase font-bold select-none text-2xl">porsche macan</h2>
-                            <h3 className="ml-3 mt-[-2px] uppercase text-sm text-zinc-500 select-none">turbo elétrico</h3>
-                            <div className="ml-3 flex gap-2 select-none mt-2 mb-5 font-medium">
-                                <p>2025/2025</p>
-                                •
-                                <p>6.500 Km</p>
+                    {cars.map((car) => (
+                        <Link to="/detail/porsche" key={car.nome}>
+                            <div className="bg-white rounded-xl overflow-hidden transition duration-150 hover:scale-101 active:scale-99">
+                                <div className="w-full h-72 rounded-lg bg-slate-200" style={{ display: loadImages.includes(car.nome) ? "none" : "block" }}></div>
+                                <img src={car.imagem[0].url} alt="foto-veiculo" onLoad={() => handleImageLoad(car.nome)} style={{ display: loadImages.includes(car.nome) ? "block" : "none" }}/>
+                                <h2 className="ml-3 mt-3 uppercase font-bold select-none text-2xl">{car.nome}</h2>
+                                <h3 className="ml-3 mt-[-2px] uppercase text-sm text-zinc-500 select-none">{car.modelo}</h3>
+                                <div className="ml-3 flex gap-2 select-none mt-2 mb-5 font-medium">
+                                    <p>{car.ano}</p>
+                                    •
+                                    <p>{car.km}Km</p>
+                                </div>
+                                <strong className="ml-3 text-xl select-none">{car.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</strong>
+                                <div className="h-px bg-zinc-200 my-2"></div>
+                                <p className="ml-3 pb-3 select-none">{car.cidade}</p>
                             </div>
-                            <strong className="ml-3 text-xl select-none">R$799.000</strong>
-                            <div className="h-px bg-zinc-200 my-2"></div>
-                            <p className="ml-3 pb-3 select-none">São Paulo - SP</p>
-                        </div>
-                    </Link>
-
-                    <Link to="/detail/porsche">
-                        <div className="bg-white rounded-xl overflow-hidden transition duration-150 hover:scale-101 active:scale-99">
-                            <img src="https://image.webmotors.com.br/_fotos/anunciousados/gigante/2026/202608/20260813/porsche-macan-turbo-eletrico-wmimagem13555497438.webp?s=fill&w=1920&h=1440&q=75" alt="foto-veiculo" />
-                            <h2 className="ml-3 mt-3 uppercase font-bold select-none text-2xl">porsche macan</h2>
-                            <h3 className="ml-3 mt-[-2px] uppercase text-sm text-zinc-500 select-none">turbo elétrico</h3>
-                            <div className="ml-3 flex gap-2 select-none mt-2 mb-5 font-medium">
-                                <p>2025/2025</p>
-                                •
-                                <p>6.500 Km</p>
-                            </div>
-                            <strong className="ml-3 text-xl select-none">R$799.000</strong>
-                            <div className="h-px bg-zinc-200 my-2"></div>
-                            <p className="ml-3 pb-3 select-none">São Paulo - SP</p>
-                        </div>
-                    </Link>
-
-                    <Link to="/detail/porsche">
-                        <div className="bg-white rounded-xl overflow-hidden transition duration-150 hover:scale-101 active:scale-99">
-                            <img src="https://image.webmotors.com.br/_fotos/anunciousados/gigante/2026/202608/20260813/porsche-macan-turbo-eletrico-wmimagem13555497438.webp?s=fill&w=1920&h=1440&q=75" alt="foto-veiculo" />
-                            <h2 className="ml-3 mt-3 uppercase font-bold select-none text-2xl">porsche macan</h2>
-                            <h3 className="ml-3 mt-[-2px] uppercase text-sm text-zinc-500 select-none">turbo elétrico</h3>
-                            <div className="ml-3 flex gap-2 select-none mt-2 mb-5 font-medium">
-                                <p>2025/2025</p>
-                                •
-                                <p>6.500 Km</p>
-                            </div>
-                            <strong className="ml-3 text-xl select-none">R$799.000</strong>
-                            <div className="h-px bg-zinc-200 my-2"></div>
-                            <p className="ml-3 pb-3 select-none">São Paulo - SP</p>
-                        </div>
-                    </Link>
+                        </Link>
+                    ))}
 
                 </section>
 

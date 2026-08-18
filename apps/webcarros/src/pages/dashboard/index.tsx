@@ -1,7 +1,12 @@
+import { Container } from "../../components/container"
+import { Panel } from "../../components/panel"
+
 export function Dashboard() {
     return (
-        <>
-            <h1>Dashboard</h1>
-        </>
+        <main className="py-10">
+            <Container>
+                <Panel/>
+            </Container>
+        </main>
     )
 }
