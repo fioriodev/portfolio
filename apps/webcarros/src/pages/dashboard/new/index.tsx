@@ -128,7 +128,7 @@ export function New() {
     }
 
     return (
-        <main className="py-10">
+        <main>
             <Container>
                 <Panel/>
 
