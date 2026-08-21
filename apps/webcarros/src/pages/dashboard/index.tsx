@@ -3,8 +3,9 @@ import { Panel } from "../../components/panel"
 
 import { FiTrash2 } from "react-icons/fi"
 
-import { db } from "../../services/firebaseConnection"
-import { getDocs, collection, query, where } from "firebase/firestore"
+import { db, storage } from "../../services/firebaseConnection"
+import { getDocs, collection, query, where, deleteDoc, doc } from "firebase/firestore"
+import { ref, deleteObject } from "firebase/storage"
 
 import { useState, useEffect, useContext } from "react"
 import { UserContext } from "../../contexts"
@@ -27,7 +28,7 @@ type imageProps = {
 }
 
 export function Dashboard() {
-    const[cars, setCars] = useState<carProps[]>()
+    const[cars, setCars] = useState<carProps[]>([])
     const{ user } = useContext(UserContext)
 
     useEffect(() => {
@@ -67,6 +68,31 @@ export function Dashboard() {
         })
     }
 
+    async function handleDeleteCar(car: carProps) {
+        if(!user?.uid) {
+            return
+        }
+ 
+        const docRef = doc(db, "cars", car.id)
+        await deleteDoc(docRef)
+        
+        car.imagem.map(async(image) => {
+            const imagePath = `/temps/${user.uid}/${image.name}`
+
+            const imageRef = ref(storage, imagePath)
+
+            await deleteObject(imageRef)
+            .then(() => {
+                console.log("IMAGEM DELETADA COM SUCESSO!")
+            })
+            .catch((err) => {
+                console.log("ERRO AO DELETAR IMAGEM:", err)
+            })
+        })
+
+        setCars(cars.filter(currentCar => currentCar.id !== car.id))    
+    }
+
     return (
         <Container>
             <Panel/>
@@ -75,7 +101,7 @@ export function Dashboard() {
                 
                 {cars?.map((car) => (
                     <section className="w-full bg-white rounded-lg relative overflow-hidden" key={car.uid}>
-                        <button className="absolute bg-white p-3 rounded-full top-3 right-3 cursor-pointer transition duration-150 hover:scale-110 active:scale-100"><FiTrash2 size={25}/></button>
+                        <button className="absolute bg-white p-3 rounded-full top-3 right-3 cursor-pointer transition duration-150 hover:scale-110 active:scale-100" onClick={() => handleDeleteCar(car)}><FiTrash2 size={25}/></button>
                         <img src={car.imagem[0].url} alt="foto-veiculo" className="w-full mb-2 max-h-70"/>
                         <h2 className="uppercase text-2xl font-bold ml-3 select-none">{car.nome}</h2>
                         <h3 className="ml-3 text-sm text-zinc-500 mt-[-2px] select-none">{car.modelo}</h3>
