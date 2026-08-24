@@ -165,9 +165,9 @@ export function Home() {
     ]
 
     const calendarMatch = {
-        time: '17:00',
-        date: 'Sábado, 29/08',
-        stadium: 'Arena Municipal'
+        time: '12:00',
+        date: 'Domingo, 30/08',
+        stadium: 'Sacadura Cabral'
     }
 
     const nextMatch1 = {
