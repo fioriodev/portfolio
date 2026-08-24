@@ -161,7 +161,7 @@ export function Home() {
         { label: 'Times Inscritos', value: dates?.qtdTeams || '00', icon: '👥', color: 'bg-blue-50 text-blue-600' },
         { label: 'Partidas Jogadas', value: '00/11', icon: '⚡', color: 'bg-emerald-50 text-emerald-600' },
         { label: 'Gols Marcados', value: totalGoalsSum, icon: '⚽', color: 'bg-amber-50 text-amber-600' },
-        { label: 'Próxima Rodada', value: 'Sábado, 29/08', icon: '📅', color: 'bg-purple-50 text-purple-600' },
+        { label: 'Próxima Rodada', value: 'Domingo, 30/08', icon: '📅', color: 'bg-purple-50 text-purple-600' },
     ]
 
     const calendarMatch = {
