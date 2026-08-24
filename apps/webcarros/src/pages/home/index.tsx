@@ -8,6 +8,7 @@ import { db } from "../../services/firebaseConnection"
 import { getDocs, collection, query, orderBy } from "firebase/firestore"
 
 interface carsProps {
+    id: string;
     ano: string;
     cidade: string;
     imagem: imageCars[];
@@ -15,6 +16,7 @@ interface carsProps {
     modelo: string;
     nome: string;
     valor: number;
+    uid: string;
 }
 
 type imageCars = {
@@ -40,13 +42,15 @@ export function Home() {
 
             snapshot.forEach(doc => {
                 carlists.push({
+                    id: doc.id,
                     nome: doc.data().nome,
                     modelo: doc.data().modelo,
                     ano: doc.data().ano,
                     km: doc.data().km,
                     valor: Number(doc.data().valor),
                     cidade: doc.data().cidade,
-                    imagem: doc.data().imagem
+                    imagem: doc.data().imagem,
+                    uid: doc.data().uid
                 })
                 console.log(carlists)
                 setCars(carlists)
@@ -81,7 +85,7 @@ export function Home() {
                 <section className="mt-10 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-10">
 
                     {cars.map((car) => (
-                        <Link to="/detail/porsche" key={car.nome}>
+                        <Link to={`/detail/${car.id}`} key={car.nome}>
                             <div className="bg-white rounded-xl overflow-hidden transition duration-150 hover:scale-101 active:scale-99">
                                 <div className="w-full h-72 rounded-lg bg-slate-200" style={{ display: loadImages.includes(car.nome) ? "none" : "block" }}></div>
                                 <img src={car.imagem[0].url} alt="foto-veiculo" onLoad={() => handleImageLoad(car.nome)} style={{ display: loadImages.includes(car.nome) ? "block" : "none" }}/>
