@@ -7,6 +7,8 @@ import { Footer } from "../../components/footer"
 import { db } from "../../services/firebaseConnection"
 import { getDoc, doc } from "firebase/firestore"
 
+import { Swiper, SwiperSlide } from "swiper/react"
+
 interface carDetail {
     name: string;
     price: number;
@@ -28,6 +30,7 @@ type imageProps = {
 export function CarDetail() {
     const{ id } = useParams()
     const[car, setCar] = useState<carDetail>()
+    const [sliderPerView, setSliderPerView] = useState<number>(2)
 
     useEffect(() => {
         getCar()
@@ -58,8 +61,32 @@ export function CarDetail() {
         })
     }
 
+    useEffect(() => {
+        handleResize()
+        window.addEventListener("resize", handleResize)
+        return() => {
+            window.removeEventListener("resize", handleResize)
+        }
+    }, [])
+
+    function handleResize() {
+        if(window.innerWidth < 720) {
+            setSliderPerView(1)
+        } else {
+            setSliderPerView(2)
+        }
+    }
+
     return (
         <main>
+
+            <Swiper slidesPerView={sliderPerView} pagination={{clickable: true}} navigation>
+                {car?.images.map(image => (
+                    <SwiperSlide>
+                        <img src={image.url} className="w-full h-96 object-cover" />
+                    </SwiperSlide>
+                ))}
+            </Swiper>
 
             <Container>
                 {car && (
