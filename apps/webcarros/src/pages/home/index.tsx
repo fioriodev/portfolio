@@ -101,7 +101,7 @@ export function Home() {
 
             setCars(carsFilter)
         })
-        .catch((error) => {
+        .catch(() => {
             alert("NÃO FOI ENCONTRADO VEÍCULO DIGITADO")
         })
     }
