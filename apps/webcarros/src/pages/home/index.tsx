@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 import { useState, useEffect } from "react"
 
 import { db } from "../../services/firebaseConnection"
-import { getDocs, collection, query, orderBy } from "firebase/firestore"
+import { getDocs, collection, query, orderBy, where } from "firebase/firestore"
 
 interface carsProps {
     id: string;
@@ -27,6 +27,7 @@ type imageCars = {
 export function Home() {
     const[cars, setCars] = useState<carsProps[]>([])
     const[loadImages, setLoadImages] = useState<string[]>([])
+    const[input, setInput] = useState("")
 
     useEffect(() => {
         getCars()
@@ -65,14 +66,55 @@ export function Home() {
         setLoadImages(prevNames => [...prevNames, name])
     }
 
+    async function handleSearchCar() {
+        if(input === '') {
+            getCars()
+            return;
+        }
+
+        setCars([])
+        setLoadImages([])
+
+        const docRef = collection(db, "cars")
+        const queryRef = query(docRef, where("nome", ">=", input.toUpperCase()), where("nome", "<=", input.toUpperCase() + "\uf8ff"))
+
+        await getDocs(queryRef)
+        .then((snapshot) => {
+
+            console.log(snapshot)
+         
+            let carsFilter = [] as carsProps[]
+
+            snapshot.forEach(doc => {
+                carsFilter.push({
+                    id: doc.id,
+                    ano: doc.data().ano,
+                    cidade: doc.data().cidade,
+                    imagem: doc.data().imagem,
+                    km: doc.data().km,
+                    modelo: doc.data().modelo,
+                    nome: doc.data().nome,
+                    valor: Number(doc.data().valor),
+                    uid: doc.data().uid
+                })
+            })
+
+            setCars(carsFilter)
+        })
+        .catch((error) => {
+            alert("NÃO FOI ENCONTRADO VEÍCULO DIGITADO")
+        })
+    }
+
     return (
         <main className="pt-20">
 
             <Container>
 
-                <form className="bg-white mb-20 max-w-2xl mx-auto flex p-4 gap-5 rounded-md">
+                <form className="bg-white mb-20 max-w-2xl mx-auto flex p-4 gap-5 rounded-md" onSubmit={(e) => {e.preventDefault(); handleSearchCar();}}>
 
-                    <input type="text" placeholder="Digite o nome do carro..." className="border-1 border-neutral-300 flex-2 md:flex-3 h-10 px-3 rounded-md outline-none"/>
+                    <input type="text" placeholder="Digite o nome do carro..." className="border-1 border-neutral-300 flex-2 md:flex-3 h-10 px-3 rounded-md outline-none"
+                    value={input} onChange={(e) => setInput(e.target.value)}/>
 
                     <button type="submit" className="bg-red-500 text-white font-medium cursor-pointer flex-1 rounded-md transition duration-130 hover:bg-red-600 active:bg-red-500">
                         Buscar

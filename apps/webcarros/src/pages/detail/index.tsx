@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 
 import { Container } from "../../components/container"
 import { Footer } from "../../components/footer"
@@ -30,7 +30,8 @@ type imageProps = {
 export function CarDetail() {
     const{ id } = useParams()
     const[car, setCar] = useState<carDetail>()
-    const [sliderPerView, setSliderPerView] = useState<number>(2)
+    const[sliderPerView, setSliderPerView] = useState<number>(2)
+    const navigate = useNavigate()
 
     useEffect(() => {
         getCar()
@@ -43,6 +44,11 @@ export function CarDetail() {
         
         await getDoc(docRef)
         .then((snapshot) => {
+            
+            if(!snapshot.data()) {
+                navigate("/")
+            }
+
             setCar({
                 name: snapshot.data()?.nome,
                 price: Number(snapshot.data()?.valor),
@@ -79,18 +85,21 @@ export function CarDetail() {
 
     return (
         <main>
-
-            <Swiper slidesPerView={sliderPerView} pagination={{clickable: true}} navigation>
-                {car?.images.map(image => (
-                    <SwiperSlide>
-                        <img src={image.url} className="w-full h-96 object-cover" />
-                    </SwiperSlide>
-                ))}
-            </Swiper>
-
             <Container>
+
                 {car && (
-                    <section className="bg-white max-w-11/12 mx-auto mt-20 p-5 rounded-lg select-none">
+                    <Swiper slidesPerView={sliderPerView} pagination={{clickable: true}} navigation>
+                        {car?.images.map(image => (
+                            <SwiperSlide>
+                                <img src={image.url} className="w-full h-96 object-cover mt-5" />
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                )}
+
+            
+                {car && (
+                    <section className="bg-white mx-auto mt-5 p-5 rounded-lg select-none">
                         <div className="flex flex-col gap-5 md:flex-row  justify-between">
                             <div>
                                 <h1 className="text-3xl font-bold select-none">{car.name}</h1>
@@ -127,7 +136,8 @@ export function CarDetail() {
                                 <p>{car.telephone}</p>
                             </div>
                         </div>
-                        <a href={`https://wa.me/${car.telephone}`} rel="noopener noreferrer" className="bg-green-600 text-white h-12 flex items-center justify-center font-medium w-full block text-center cursor-pointer rounded-md mt-5 transition duration-150 hover:bg-green-700 active:bg-green-600">Enviar mensagem whatsapp</a>
+
+                        <a href={`https://api.whatsapp.com/send?phone=${car.telephone}&text=Olá vi esse ${car?.name} no site WebCarros e fiquei interessado!`} rel="noopener noreferrer" className="bg-green-600 text-white h-12 flex items-center justify-center font-medium w-full block text-center cursor-pointer rounded-md mt-5 transition duration-150 hover:bg-green-700 active:bg-green-600">Enviar mensagem whatsapp</a>
                     </section>
                 )}
             </Container>

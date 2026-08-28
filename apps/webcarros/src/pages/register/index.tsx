@@ -15,6 +15,8 @@ import { useEffect } from 'react'
 import { useContext } from 'react'
 import { UserContext } from '../../contexts'
 
+import toast from 'react-hot-toast'
+
 const schema = z.object({
     name: z.string().nonempty("Campo nome obrigatório"),
     email: z.email("Email obrigatório").nonempty("Campo email obrigatrório"),
@@ -47,10 +49,11 @@ export function Register() {
                 email: data.email
             }
             localStorage.setItem("@User", JSON.stringify(userData))
+            toast.success("Cadastrado com Sucesso")
             navigate("/dashboard", {replace: true})
         })
         .catch((error) => {
-            alert("Não foi possível cadastrar")
+            toast.error("Não foi possível cadastrar")
             console.log(error)
         })
     }

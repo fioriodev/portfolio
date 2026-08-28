@@ -13,6 +13,8 @@ import { storage, db } from "../../../services/firebaseConnection"
 import { uploadBytes, ref, getDownloadURL, deleteObject } from "firebase/storage"
 import { addDoc, collection } from "firebase/firestore"
 
+import toast from "react-hot-toast"
+
 interface imageProps {
     name: string;
     previewUrl: string;
@@ -44,7 +46,7 @@ export function New() {
 
     function formSubmit(data: FormData) {
         if(images.length === 0) {
-            alert("Insira imagem para continuar")
+            toast.error("Insira imagem para continuar")
             return
         }
 
@@ -56,7 +58,7 @@ export function New() {
         })
 
         addDoc(collection(db, "cars"), {
-            nome: data.name,
+            nome: data.name.toUpperCase(),
             modelo: data.model,
             ano: data.year,
             km: data.km,
@@ -72,10 +74,10 @@ export function New() {
         .then(() => {
             reset()
             setImages([])
-            alert("CADASTRADO COM SUCESSO")
+            toast.success("CADASTRADO COM SUCESSO")
         })
         .catch(() => {
-            alert("ERRO AO CADASTRAR")
+            toast.error("ERRO AO CADASTRAR")
         })
     }
 
@@ -95,7 +97,7 @@ export function New() {
             }
             setImages(currentImage => [...currentImage, newImage])
         } catch {
-            alert("Não foi possível enviar imagem")
+            toast.error("Não foi possível enviar imagem")
         }
     }
 
@@ -106,7 +108,7 @@ export function New() {
             if(image.type === 'image/jpeg' || image.type === 'image/png') {
                 await handleUpload(image)
             } else {
-                alert("Envie uma imagem JPEG ou PNG para continuar")
+                toast.error("Envie uma imagem JPEG ou PNG para continuar")
                 return
             }
         }
@@ -118,11 +120,11 @@ export function New() {
 
         await deleteObject(deleteImage)
         .then(() => {
-            alert("Imagem deletada")
+            toast.success("Imagem deletada")
             setImages(images.filter(prevImage => prevImage.name !== image.name))
         })
         .catch((error) => {
-            alert("Erro ao deletar imagem")
+            toast.error("Erro ao deletar imagem")
             console.log(error)
         })
     }

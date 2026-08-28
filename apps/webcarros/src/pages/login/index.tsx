@@ -14,6 +14,8 @@ import { UserContext } from '../../contexts'
 
 import { useEffect } from 'react'
 
+import toast from 'react-hot-toast'
+
 const schema = z.object({
     email: z.email("Email inválido").nonempty("Campo email obrigatório"),
     password: z.string().nonempty("Campo senha obrigatório")
@@ -36,6 +38,7 @@ export function Login() {
                 uid: user.user.uid,
                 email: user.user.email
             }
+            toast.success("Logado com sucesso!")
             saveInfoUser({
                 uid: user.user.uid,
                 name: user.user.displayName,
@@ -45,7 +48,7 @@ export function Login() {
             navigate("/dashboard")
         })
         .catch(() => {
-            alert("Usuário não existe")
+            toast.error("Erro ao fazer o login")
         })
     }
 
