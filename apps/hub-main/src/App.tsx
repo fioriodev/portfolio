@@ -3,6 +3,7 @@ import { Github, Linkedin, ExternalLink, Mail } from 'lucide-react';
 // Se a imagem estiver em public/medium-logo.png, o Vite entende o caminho abaixo:
 import devLink from '/devlink.png'
 import criptoApp from '/criptoapp.png'
+import WebCarros from '/webcarros.png'
 
 const ReactIcon = () => (
   <svg width="24" height="24" viewBox="-11.5 -10.23174 23 20.46348" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#61DAFB] animate-[spin_10s_linear_infinite]">
@@ -57,6 +58,14 @@ const Portfolio = () => {
       linkGithub: "https://github.com/fioriodev/portfolio/tree/main/apps/criptoapp",
       linkDemo: "https://portfolio-criptoapp.vercel.app/",
       image: criptoApp
+    },
+    {
+      title: "🚗 WebCarros — Marketplace de Veículos",
+      description: "Plataforma web moderna e responsiva voltada para o mercado de compra e venda de veículos. O sistema conta com catálogo dinâmico, buscas personalizadas, detalhes técnicos com carrossel de imagens, contato direto via WhatsApp, além de autenticação global com Firebase, rotas protegidas e um painel administrativo exclusivo para gestão de anúncios.",
+      tech: ["React", "TypeScript", "Tailwind CSS", "Firebase", "Zod", "React Router"],
+      linkGithub: "https://github.com/fioriodev/portfolio/tree/main/apps/webcarros",
+      linkDemo: "https://portfolio-webcarros.vercel.app/",
+      image: WebCarros
     }
   ];
 
