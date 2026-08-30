@@ -161,32 +161,32 @@ export function Home() {
         { label: 'Times Inscritos', value: dates?.qtdTeams || '00', icon: '👥', color: 'bg-blue-50 text-blue-600' },
         { label: 'Partidas Jogadas', value: '00/11', icon: '⚡', color: 'bg-emerald-50 text-emerald-600' },
         { label: 'Gols Marcados', value: totalGoalsSum, icon: '⚽', color: 'bg-amber-50 text-amber-600' },
-        { label: 'Próxima Rodada', value: 'Domingo, 30/08', icon: '📅', color: 'bg-purple-50 text-purple-600' },
+        { label: 'Próxima Rodada', value: 'Sábado, 05/09', icon: '📅', color: 'bg-purple-50 text-purple-600' },
     ]
 
     const calendarMatch = {
-        time: '12:00',
-        date: 'Domingo, 30/08',
+        time: '17:00',
+        date: 'Sábado, 05/09',
         stadium: 'Sacadura Cabral'
     }
 
     const nextMatch1 = {
         homeTeam: 'Aser',
         homeLogo: <img src={Aser} alt="logo-equipe" className="w-12 h-12 object-contain"/>,
-        awayTeam: 'Benjamin',
-        awayLogo: <img src={Benjamin} alt="logo-equipe" className="w-12 h-12 object-contain"/>,
+        awayTeam: 'Levi',
+        awayLogo: <img src={Levi} alt="logo-equipe" className="w-12 h-12 object-contain"/>,
     }
 
     const nextMatch2 = {
-        homeTeam: 'Levi',
-        homeLogo: <img src={Levi} alt="logo-equipe" className="w-12 h-12 object-contain"/>,
-        awayTeam: 'Efraim',
-        awayLogo: <img src={Efraim} alt="logo-equipe" className="w-12 h-12 object-contain"/>,
+        homeTeam: 'Benjamin',
+        homeLogo: <img src={Benjamin} alt="logo-equipe" className="w-12 h-12 object-contain"/>,
+        awayTeam: 'Gade',
+        awayLogo: <img src={Gade} alt="logo-equipe" className="w-12 h-12 object-contain"/>,
     }
 
     const nextMatch3 = {
-        homeTeam: 'Gade',
-        homeLogo: <img src={Gade} alt="logo-equipe" className="w-12 h-12 object-contain"/>,
+        homeTeam: 'Efraim',
+        homeLogo: <img src={Efraim} alt="logo-equipe" className="w-12 h-12 object-contain"/>,
         awayTeam: 'Naftali',
         awayLogo: <img src={Naftali} alt="logo-equipe" className="w-12 h-12 object-contain"/>,
     }
